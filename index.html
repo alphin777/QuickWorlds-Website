@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#f8f8f4">
     <title>QuickWorlds</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="styles.css?v=20260830-1">
+    <link rel="stylesheet" href="styles.css?v=20260902-1">
   </head>
   <body>
     <main class="page-shell">
@@ -36,7 +36,7 @@
         </p>
       </section>
 
-      <p class="enter-link"><a href="#coming-soon">[ enter later ]</a></p>
+      <p class="enter-link"><a href="#coming-soon" data-quickworlds-loading>[ enter later ]</a></p>
 
       <section id="coming-soon" class="visually-hidden" aria-label="Coming soon">
         Shared worlds are coming soon.
@@ -51,5 +51,24 @@
         <p>&copy; 2026 QuickWorlds</p>
       </footer>
     </main>
+
+    <div
+      class="loading-overlay"
+      data-loading-overlay
+      role="dialog"
+      aria-label="QuickWorlds loading sequence"
+      aria-modal="true"
+      hidden
+    >
+      <canvas
+        class="loading-logo"
+        data-loading-logo
+        width="1874"
+        height="839"
+        aria-hidden="true"
+      ></canvas>
+    </div>
+
+    <script src="loading-demo.js?v=20260902-1"></script>
   </body>
 </html>

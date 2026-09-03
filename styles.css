@@ -176,6 +176,32 @@ footer p {
   font-weight: 700;
 }
 
+.loading-overlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #02040b;
+  cursor: default;
+}
+
+.loading-overlay[hidden] {
+  display: none;
+}
+
+.loading-logo {
+  display: block;
+  width: min(94vw, 1120px);
+  height: auto;
+  image-rendering: pixelated;
+}
+
+body.loading-active {
+  overflow: hidden;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
