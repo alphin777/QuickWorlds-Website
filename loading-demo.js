@@ -55,13 +55,45 @@
     oscillator.stop(start + duration + 0.02);
   };
 
-  const playQuickTheme = () => {
+  const unlockAudio = () => {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) {
-      return null;
+      overlay.dataset.audioState = "unavailable";
+      return { audio: null, ready: Promise.resolve() };
     }
 
-    const audio = new AudioContext();
+    const audio = new AudioContext({ latencyHint: "interactive" });
+    const unlockBuffer = audio.createBuffer(1, 1, audio.sampleRate);
+    const unlockSource = audio.createBufferSource();
+    const unlockGain = audio.createGain();
+
+    unlockSource.buffer = unlockBuffer;
+    unlockGain.gain.setValueAtTime(0.0001, audio.currentTime);
+    unlockSource.connect(unlockGain);
+    unlockGain.connect(audio.destination);
+
+    const updateAudioState = () => {
+      overlay.dataset.audioState = audio.state;
+    };
+
+    updateAudioState();
+    audio.addEventListener("statechange", updateAudioState);
+
+    // Mobile Safari requires audio activation to happen synchronously inside
+    // the deliberate tap. Resume first, then start a one-frame silent source
+    // so the phone's output route is open before QuickTheme is scheduled.
+    const ready = audio.resume().catch(() => {}).then(updateAudioState);
+    unlockSource.start(0);
+    unlockSource.stop(audio.currentTime + 0.01);
+
+    return { audio, ready };
+  };
+
+  const playQuickTheme = (audio) => {
+    if (!audio) {
+      return;
+    }
+
     const now = audio.currentTime + 0.025;
     const master = audio.createGain();
     const room = audio.createDelay(1);
@@ -70,8 +102,8 @@
     const scale = [1, 9 / 8, 81 / 64, 4 / 3, 3 / 2, 27 / 16, 243 / 128, 2];
 
     master.gain.setValueAtTime(0.0001, now);
-    master.gain.exponentialRampToValueAtTime(0.72, now + 0.18);
-    master.gain.setValueAtTime(0.72, now + 7.15);
+    master.gain.exponentialRampToValueAtTime(0.88, now + 0.18);
+    master.gain.setValueAtTime(0.88, now + 7.15);
     master.gain.exponentialRampToValueAtTime(0.0001, now + DURATION_SECONDS);
     master.connect(audio.destination);
 
@@ -85,14 +117,14 @@
     dryAndRoom.connect(master);
     dryAndRoom.connect(room);
 
-    scheduleSine(audio, dryAndRoom, e2, now, 7.95, 0.036);
-    scheduleSine(audio, dryAndRoom, e2 * 1.5, now + 0.04, 7.82, 0.024);
+    scheduleSine(audio, dryAndRoom, e2, now, 7.95, 0.05);
+    scheduleSine(audio, dryAndRoom, e2 * 1.5, now + 0.04, 7.82, 0.032);
 
     const arrivals = randomUnit() < 0.5 ? [0, 2, 4, 7] : [0, 1, 2, 4, 7];
     const arrivalStep = 0.38 + randomUnit() * 0.08;
     arrivals.forEach((degree, index) => {
       const start = now + 0.34 + index * arrivalStep;
-      scheduleSine(audio, dryAndRoom, e2 * 2 * scale[degree], start, 0.72, 0.052);
+      scheduleSine(audio, dryAndRoom, e2 * 2 * scale[degree], start, 0.72, 0.072);
     });
 
     const patterns = [
@@ -108,7 +140,7 @@
     for (let index = 0; index < 14; index += 1) {
       const degree = pattern[index % pattern.length];
       const octave = index > 7 && randomUnit() > 0.42 ? 4 : 2;
-      const bloom = 0.025 + Math.sin((index / 13) * Math.PI) * 0.014;
+      const bloom = 0.034 + Math.sin((index / 13) * Math.PI) * 0.019;
       scheduleSine(
         audio,
         dryAndRoom,
@@ -127,12 +159,9 @@
         e2 * 8 * scale[degree],
         now + 4.15 + index * (0.72 + randomUnit() * 0.16),
         0.82,
-        0.0085,
+        0.0115,
       );
     });
-
-    audio.resume().catch(() => {});
-    return audio;
   };
 
   const makeTiles = () => {
@@ -247,7 +276,7 @@
     enterLink.focus({ preventScroll: true });
   };
 
-  enterLink.addEventListener("click", (event) => {
+  enterLink.addEventListener("click", async (event) => {
     event.preventDefault();
     if (active) {
       return;
@@ -258,7 +287,21 @@
     document.body.classList.add("loading-active");
     document.querySelector("main")?.setAttribute("aria-hidden", "true");
 
-    audioContext = playQuickTheme();
+    const unlocked = unlockAudio();
+    audioContext = unlocked.audio;
+
+    // Usually resolves immediately. The short fallback keeps the visual
+    // sequence responsive on browsers that report audio state slowly.
+    await Promise.race([
+      unlocked.ready,
+      new Promise((resolve) => window.setTimeout(resolve, 120)),
+    ]);
+
+    if (!active || audioContext !== unlocked.audio) {
+      return;
+    }
+
+    playQuickTheme(audioContext);
     const startedAt = performance.now();
     drawLogoSequence(startedAt);
     finishTimer = window.setTimeout(finishSequence, DURATION_SECONDS * 1000 + 80);
