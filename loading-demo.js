@@ -18,6 +18,7 @@
   let active = false;
   let animationFrame = 0;
   let finishTimer = 0;
+  let audioContext = null;
   let audioElement = null;
   let audioUrl = "";
 
@@ -33,6 +34,112 @@
       [items[index], items[swapIndex]] = [items[swapIndex], items[index]];
     }
     return items;
+  };
+
+  const scheduleSine = (audio, destination, frequency, start, duration, peak) => {
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+    const attack = Math.min(0.12, duration * 0.22);
+    const release = Math.min(0.55, duration * 0.42);
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(frequency, start);
+    oscillator.detune.setValueAtTime((randomUnit() - 0.5) * 3.5, start);
+
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(peak, start + attack);
+    gain.gain.setValueAtTime(peak, Math.max(start + attack, start + duration - release));
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+    oscillator.connect(gain);
+    gain.connect(destination);
+    oscillator.start(start);
+    oscillator.stop(start + duration + 0.02);
+  };
+
+  const playOriginalQuickTheme = () => {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) {
+      return false;
+    }
+
+    const audio = new AudioContext();
+    const now = audio.currentTime + 0.025;
+    const master = audio.createGain();
+    const room = audio.createDelay(1);
+    const roomGain = audio.createGain();
+    const e2 = 82.4069;
+    const scale = [1, 9 / 8, 81 / 64, 4 / 3, 3 / 2, 27 / 16, 243 / 128, 2];
+
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.exponentialRampToValueAtTime(0.72, now + 0.18);
+    master.gain.setValueAtTime(0.72, now + 7.15);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + DURATION_SECONDS);
+    master.connect(audio.destination);
+
+    room.delayTime.setValueAtTime(0.24 + randomUnit() * 0.08, now);
+    roomGain.gain.setValueAtTime(0.16, now);
+    room.connect(roomGain);
+    roomGain.connect(master);
+
+    const dryAndRoom = audio.createGain();
+    dryAndRoom.gain.setValueAtTime(1, now);
+    dryAndRoom.connect(master);
+    dryAndRoom.connect(room);
+
+    scheduleSine(audio, dryAndRoom, e2, now, 7.95, 0.036);
+    scheduleSine(audio, dryAndRoom, e2 * 1.5, now + 0.04, 7.82, 0.024);
+
+    const arrivals = randomUnit() < 0.5 ? [0, 2, 4, 7] : [0, 1, 2, 4, 7];
+    const arrivalStep = 0.38 + randomUnit() * 0.08;
+    arrivals.forEach((degree, index) => {
+      const start = now + 0.34 + index * arrivalStep;
+      scheduleSine(audio, dryAndRoom, e2 * 2 * scale[degree], start, 0.72, 0.052);
+    });
+
+    const patterns = [
+      [0, 2, 4, 7, 4, 2],
+      [0, 4, 2, 7, 4, 2],
+      [0, 2, 4, 5, 7, 4],
+      [0, 1, 4, 2, 5, 7],
+    ];
+    const pattern = patterns[Math.floor(randomUnit() * patterns.length)];
+    const arpStep = 0.31 + randomUnit() * 0.055;
+    const arpStart = now + 2.05 + randomUnit() * 0.18;
+
+    for (let index = 0; index < 14; index += 1) {
+      const degree = pattern[index % pattern.length];
+      const octave = index > 7 && randomUnit() > 0.42 ? 4 : 2;
+      const bloom = 0.025 + Math.sin((index / 13) * Math.PI) * 0.014;
+      scheduleSine(
+        audio,
+        dryAndRoom,
+        e2 * octave * scale[degree],
+        arpStart + index * arpStep,
+        0.48 + randomUnit() * 0.18,
+        bloom,
+      );
+    }
+
+    const reflectionDegrees = shuffle([2, 4, 5, 7]).slice(0, 3);
+    reflectionDegrees.forEach((degree, index) => {
+      scheduleSine(
+        audio,
+        dryAndRoom,
+        e2 * 8 * scale[degree],
+        now + 4.15 + index * (0.72 + randomUnit() * 0.16),
+        0.82,
+        0.0085,
+      );
+    });
+
+    audioContext = audio;
+    overlay.dataset.audioState = audio.state;
+    audio.addEventListener("statechange", () => {
+      overlay.dataset.audioState = audio.state;
+    });
+    audio.resume().catch(() => {});
+    return true;
   };
 
   const writeAscii = (view, offset, text) => {
@@ -159,7 +266,7 @@
     return new Blob([wav], { type: "audio/wav" });
   };
 
-  const playQuickTheme = () => {
+  const playMediaQuickTheme = () => {
     const theme = renderQuickTheme();
     audioUrl = URL.createObjectURL(theme);
     audioElement = new Audio(audioUrl);
@@ -298,6 +405,10 @@
       URL.revokeObjectURL(audioUrl);
       audioUrl = "";
     }
+    if (audioContext && audioContext.state !== "closed") {
+      audioContext.close().catch(() => {});
+    }
+    audioContext = null;
     enterLink.focus({ preventScroll: true });
   };
 
@@ -312,7 +423,9 @@
     document.body.classList.add("loading-active");
     document.querySelector("main")?.setAttribute("aria-hidden", "true");
 
-    playQuickTheme();
+    if (!window.isSecureContext || !playOriginalQuickTheme()) {
+      playMediaQuickTheme();
+    }
     const startedAt = performance.now();
     drawLogoSequence(startedAt);
     finishTimer = window.setTimeout(finishSequence, DURATION_SECONDS * 1000 + 80);
