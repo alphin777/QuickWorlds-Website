@@ -5,6 +5,8 @@
   const enterLink = document.querySelector("[data-quickworlds-loading]");
   const overlay = document.querySelector("[data-loading-overlay]");
   const canvas = document.querySelector("[data-loading-logo]");
+  const mobileMessage = document.querySelector("[data-mobile-world-message]");
+  const scriptUrl = document.currentScript?.src || window.location.href;
 
   if (!enterLink || !overlay || !canvas) {
     return;
@@ -13,7 +15,7 @@
   const context2d = canvas.getContext("2d", { alpha: true });
   const logo = new Image();
   logo.decoding = "async";
-  logo.src = "assets/quickworlds-logo-horizontal.png";
+  logo.src = new URL("assets/quickworlds-logo-horizontal.png", scriptUrl).href;
 
   let active = false;
   let animationFrame = 0;
@@ -21,11 +23,82 @@
   let audioContext = null;
   let audioElement = null;
   let audioUrl = "";
+  let visitSeed = 0;
+  let randomState = 0;
+  let pendingWorldWindow = null;
 
-  const randomUnit = () => {
+  const worldUrl = enterLink.dataset.quickworldUrl || "";
+  const returnUrl = enterLink.dataset.quickworldReturn || "";
+
+  const secureRandomUnit = () => {
     const value = new Uint32Array(1);
     crypto.getRandomValues(value);
     return value[0] / 4294967296;
+  };
+
+  const randomUnit = () => {
+    if (!randomState) {
+      return secureRandomUnit();
+    }
+    randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0;
+    return randomState / 4294967296;
+  };
+
+  const isMobileDeviceClass = () => {
+    if (navigator.userAgentData && navigator.userAgentData.mobile) {
+      return true;
+    }
+    const userAgent = navigator.userAgent || "";
+    if (/Android|iPhone|iPad|iPod|Mobile|IEMobile|Opera Mini/i.test(userAgent)) {
+      return true;
+    }
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const hoverUnavailable = window.matchMedia("(hover: none)").matches;
+    return navigator.maxTouchPoints > 1 && coarsePointer && hoverUnavailable;
+  };
+
+  const prepareWorldWindow = () => {
+    if (!worldUrl) {
+      return;
+    }
+    pendingWorldWindow = window.open(
+      "about:blank",
+      "quickworlds-grass-field",
+      "popup=yes,width=754,height=419,resizable=yes,scrollbars=no",
+    );
+    if (!pendingWorldWindow) {
+      return;
+    }
+    pendingWorldWindow.document.title = "QuickWorlds — preparing Grass Field";
+    pendingWorldWindow.document.body.style.cssText = [
+      "margin:0",
+      "min-height:100vh",
+      "display:grid",
+      "place-items:center",
+      "background:#02040b",
+      "color:#b9c3b3",
+      "font:13px 'Courier New',monospace",
+    ].join(";");
+    pendingWorldWindow.document.body.textContent = "preparing Grass Field…";
+    window.focus();
+  };
+
+  const launchWorld = () => {
+    if (!worldUrl) {
+      return;
+    }
+    const destination = new URL(worldUrl, window.location.href);
+    destination.searchParams.set("offline", "1");
+    destination.searchParams.set("seed", String(visitSeed));
+    if (returnUrl) {
+      destination.searchParams.set("return", new URL(returnUrl, window.location.href).href);
+    }
+    if (pendingWorldWindow && !pendingWorldWindow.closed) {
+      pendingWorldWindow.location.replace(destination.href);
+      pendingWorldWindow.focus();
+      return;
+    }
+    window.location.assign(destination.href);
   };
 
   const shuffle = (items) => {
@@ -405,12 +478,77 @@
       URL.revokeObjectURL(audioUrl);
       audioUrl = "";
     }
-    if (audioContext && audioContext.state !== "closed") {
+    if (!worldUrl && audioContext && audioContext.state !== "closed") {
       audioContext.close().catch(() => {});
     }
-    audioContext = null;
-    enterLink.focus({ preventScroll: true });
+    if (!worldUrl) {
+      audioContext = null;
+      enterLink.focus({ preventScroll: true });
+    } else {
+      launchWorld();
+    }
   };
+
+  const playClosingGesture = () => {
+    if (audioContext && audioContext.state !== "closed") {
+      const now = audioContext.currentTime + 0.025;
+      const master = audioContext.createGain();
+      master.gain.setValueAtTime(0.16, now);
+      master.connect(audioContext.destination);
+      scheduleSine(audioContext, master, 330, now, 0.9, 0.12);
+      scheduleSine(audioContext, master, 495, now + 0.28, 1.15, 0.08);
+      audioContext.resume().catch(() => {});
+    }
+    overlay.hidden = false;
+    document.body.classList.add("loading-active");
+    document.querySelector("main")?.setAttribute("aria-hidden", "true");
+    const startedAt = performance.now();
+    const duration = 2200;
+    const draw = (timestamp) => {
+      const progress = Math.min(1, (timestamp - startedAt) / duration);
+      context2d.clearRect(0, 0, canvas.width, canvas.height);
+      context2d.imageSmoothingEnabled = false;
+      context2d.globalAlpha = Math.sin(progress * Math.PI);
+      context2d.drawImage(logo, 0, 0, canvas.width, canvas.height);
+      context2d.globalAlpha = 1;
+      if (progress < 1) {
+        requestAnimationFrame(draw);
+        return;
+      }
+      context2d.clearRect(0, 0, canvas.width, canvas.height);
+      overlay.hidden = true;
+      document.body.classList.remove("loading-active");
+      document.querySelector("main")?.removeAttribute("aria-hidden");
+      enterLink.focus({ preventScroll: true });
+      if (audioContext && audioContext.state !== "closed") {
+        audioContext.close().catch(() => {});
+      }
+      audioContext = null;
+    };
+    requestAnimationFrame(draw);
+  };
+
+  window.addEventListener("message", (event) => {
+    if (event.origin !== window.location.origin || !event.data) {
+      return;
+    }
+    if (event.data.type === "quickworld-ready") {
+      document.body.dataset.quickworldState = "ready";
+      return;
+    }
+    if (event.data.type === "quickworld-profile") {
+      document.body.dataset.quickworldProfile = JSON.stringify(event.data.detail || {});
+      return;
+    }
+    if (event.data.type === "quickworld-exited") {
+      document.body.dataset.quickworldState = "returned";
+      if (pendingWorldWindow && !pendingWorldWindow.closed) {
+        pendingWorldWindow.close();
+      }
+      pendingWorldWindow = null;
+      playClosingGesture();
+    }
+  });
 
   enterLink.addEventListener("click", (event) => {
     event.preventDefault();
@@ -418,7 +556,18 @@
       return;
     }
 
+    if (worldUrl && isMobileDeviceClass()) {
+      if (mobileMessage) {
+        mobileMessage.hidden = false;
+        mobileMessage.focus({ preventScroll: true });
+      }
+      return;
+    }
+
     active = true;
+    visitSeed = Math.floor(secureRandomUnit() * 2147483646) + 1;
+    randomState = visitSeed >>> 0;
+    prepareWorldWindow();
     overlay.hidden = false;
     document.body.classList.add("loading-active");
     document.querySelector("main")?.setAttribute("aria-hidden", "true");

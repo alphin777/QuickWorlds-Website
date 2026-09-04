@@ -150,6 +150,20 @@ body {
   font-weight: 700;
 }
 
+.mobile-world-message {
+  max-width: 440px;
+  margin: 10px auto 16px;
+  padding: 8px 10px;
+  border: 1px dotted var(--rule);
+  color: #660000;
+  background: #ffffe8;
+  font-weight: 700;
+}
+
+.mobile-world-message[hidden] {
+  display: none;
+}
+
 a,
 a:visited {
   color: var(--blue);

@@ -41,3 +41,7 @@ DNS changes require a fresh inspection and Michael's explicit confirmation immed
 - A shared-link room also needs a separate TLS-secured authoritative service, for example at `wss://rooms.quickworlds.com`.
 - Start with short-lived links and a small capacity. Do not expose the current local development server as production infrastructure.
 - If the site grows beyond GitHub Pages' static-project boundary, move hosting behind the same stable domain rather than changing the public QuickWorlds address.
+
+## Hosted Grass Field v0 staging gate
+
+`main` deploys automatically, so Hosted Grass Field work must stay on `staging/hosted-quickworld-proof-v0` until Michael explicitly approves publication after tuning. The staging launcher lives at `staging/grass-field/`, the generated non-threaded Godot export lives at `worlds/grass-field/`, and the public root retains `[ enter later ]` with no world route. The exported shell continues the pixel-assembly QuickWorlds loading animation across the actual engine/world download and removes it only when Grass Field reports ready. Grass Field is a separate desktop-only delivery proof; it does not publish or modify the Labyrinth and does not establish gallery, multiplayer, or mobile architecture.
