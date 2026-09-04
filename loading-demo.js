@@ -493,45 +493,6 @@
     }
   };
 
-  const playClosingGesture = () => {
-    if (audioContext && audioContext.state !== "closed") {
-      const now = audioContext.currentTime + 0.025;
-      const master = audioContext.createGain();
-      master.gain.setValueAtTime(0.16, now);
-      master.connect(audioContext.destination);
-      scheduleSine(audioContext, master, 330, now, 0.9, 0.12);
-      scheduleSine(audioContext, master, 495, now + 0.28, 1.15, 0.08);
-      audioContext.resume().catch(() => {});
-    }
-    overlay.hidden = false;
-    document.body.classList.add("loading-active");
-    document.querySelector("main")?.setAttribute("aria-hidden", "true");
-    const startedAt = performance.now();
-    const duration = 2200;
-    const draw = (timestamp) => {
-      const progress = Math.min(1, (timestamp - startedAt) / duration);
-      context2d.clearRect(0, 0, canvas.width, canvas.height);
-      context2d.imageSmoothingEnabled = false;
-      context2d.globalAlpha = Math.sin(progress * Math.PI);
-      context2d.drawImage(logo, 0, 0, canvas.width, canvas.height);
-      context2d.globalAlpha = 1;
-      if (progress < 1) {
-        requestAnimationFrame(draw);
-        return;
-      }
-      context2d.clearRect(0, 0, canvas.width, canvas.height);
-      overlay.hidden = true;
-      document.body.classList.remove("loading-active");
-      document.querySelector("main")?.removeAttribute("aria-hidden");
-      enterLink.focus({ preventScroll: true });
-      if (audioContext && audioContext.state !== "closed") {
-        audioContext.close().catch(() => {});
-      }
-      audioContext = null;
-    };
-    requestAnimationFrame(draw);
-  };
-
   window.addEventListener("message", (event) => {
     if (event.origin !== window.location.origin || !event.data) {
       return;
@@ -545,12 +506,16 @@
       return;
     }
     if (event.data.type === "quickworld-exited") {
-      document.body.dataset.quickworldState = "returned";
-      if (pendingWorldWindow && !pendingWorldWindow.closed) {
-        pendingWorldWindow.close();
-      }
+      document.body.dataset.quickworldState = "ending";
+      const exitingWorldWindow = pendingWorldWindow;
       pendingWorldWindow = null;
-      playClosingGesture();
+      window.setTimeout(() => {
+        if (exitingWorldWindow && !exitingWorldWindow.closed) {
+          exitingWorldWindow.close();
+        }
+        document.body.dataset.quickworldState = "returned";
+        enterLink.focus({ preventScroll: true });
+      }, 4700);
     }
   });
 

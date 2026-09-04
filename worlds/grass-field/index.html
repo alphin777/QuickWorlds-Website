@@ -51,6 +51,27 @@
         background: #160e13;
       }
 
+      #quickworlds-ending {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: grid;
+        place-items: center;
+        background: #02040b;
+        color: #c9d2c4;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 650ms ease;
+        font: 700 clamp(18px, 5vw, 30px)/1.25 "Courier New", monospace;
+        letter-spacing: 0.08em;
+        text-align: center;
+      }
+
+      #quickworlds-ending.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
       .quickworlds-loading__inner {
         width: min(72vw, 420px);
         text-align: center;
@@ -96,15 +117,26 @@
       </div>
     </div>
 
+    <div id="quickworlds-ending" role="status" aria-live="polite">
+      QUICKWORLDS COMING SOON
+    </div>
+
     <script src="index.js"></script>
     <script>
       (() => {
         "use strict";
 
-        const config = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":21777272,"index.wasm":39514754},"focusCanvas":false,"gdextensionLibs":[],"godotPoolSize":4};
+        const config = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":21777832,"index.wasm":39514754},"focusCanvas":false,"gdextensionLibs":[],"godotPoolSize":4};
+        config.mainPack = "index.pck?v=20260904-2";
+        config.fileSizes[config.mainPack] = config.fileSizes["index.pck"];
         const overlay = document.getElementById("quickworlds-loading");
         const state = document.getElementById("quickworlds-loading-state");
         const progress = document.querySelector("#quickworlds-loading-progress span");
+        const ending = document.getElementById("quickworlds-ending");
+
+        window.addEventListener("quickworld-exited", () => {
+          ending.classList.add("visible");
+        }, { once: true });
 
         const fail = (error) => {
           console.error(error);
