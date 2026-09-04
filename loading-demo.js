@@ -2,13 +2,14 @@
   "use strict";
 
   const DURATION_SECONDS = 8;
-  const enterLink = document.querySelector("[data-quickworlds-loading]");
+  const CANONICAL_QUICK_THEME_SEEDS = [545, 656, 707, 818, 1040];
+  const enterLinks = Array.from(document.querySelectorAll("[data-quickworlds-loading]"));
   const overlay = document.querySelector("[data-loading-overlay]");
   const canvas = document.querySelector("[data-loading-logo]");
   const mobileMessage = document.querySelector("[data-mobile-world-message]");
   const scriptUrl = document.currentScript?.src || window.location.href;
 
-  if (!enterLink || !overlay || !canvas) {
+  if (!enterLinks.length || !overlay || !canvas) {
     return;
   }
 
@@ -24,11 +25,12 @@
   let audioElement = null;
   let audioUrl = "";
   let visitSeed = 0;
+  let quickThemeSeed = 0;
   let randomState = 0;
   let pendingWorldWindow = null;
-
-  const worldUrl = enterLink.dataset.quickworldUrl || "";
-  const returnUrl = enterLink.dataset.quickworldReturn || "";
+  let enterLink = enterLinks[0];
+  let worldUrl = "";
+  let returnUrl = "";
 
   const secureRandomUnit = () => {
     const value = new Uint32Array(1);
@@ -213,6 +215,30 @@
     });
     audio.resume().catch(() => {});
     return true;
+  };
+
+  const playCanonicalQuickTheme = () => {
+    const themeUrl = new URL(
+      `assets/audio/quicktheme/quicktheme-${quickThemeSeed}.wav`,
+      scriptUrl,
+    );
+    audioElement = new Audio(themeUrl.href);
+    audioElement.preload = "auto";
+    audioElement.volume = 0.92;
+    audioElement.setAttribute("playsinline", "");
+    overlay.dataset.audioState = "prepared";
+    audioElement.addEventListener("playing", () => {
+      overlay.dataset.audioState = "playing";
+    }, { once: true });
+    audioElement.addEventListener("ended", () => {
+      overlay.dataset.audioState = "ended";
+    }, { once: true });
+    const playback = audioElement.play();
+    if (playback) {
+      playback.catch(() => {
+        overlay.dataset.audioState = "blocked";
+      });
+    }
   };
 
   const writeAscii = (view, offset, text) => {
@@ -550,33 +576,46 @@
     }
   });
 
-  enterLink.addEventListener("click", (event) => {
-    event.preventDefault();
-    if (active) {
-      return;
-    }
-
-    if (worldUrl && isMobileDeviceClass()) {
-      if (mobileMessage) {
-        mobileMessage.hidden = false;
-        mobileMessage.focus({ preventScroll: true });
+  enterLinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (active) {
+        return;
       }
-      return;
-    }
 
-    active = true;
-    visitSeed = Math.floor(secureRandomUnit() * 2147483646) + 1;
-    randomState = visitSeed >>> 0;
-    prepareWorldWindow();
-    overlay.hidden = false;
-    document.body.classList.add("loading-active");
-    document.querySelector("main")?.setAttribute("aria-hidden", "true");
+      enterLink = link;
+      worldUrl = link.dataset.quickworldUrl || "";
+      returnUrl = link.dataset.quickworldReturn || "";
+      if (worldUrl && isMobileDeviceClass()) {
+        if (mobileMessage) {
+          mobileMessage.hidden = false;
+          mobileMessage.focus({ preventScroll: true });
+        }
+        return;
+      }
 
-    if (!window.isSecureContext || !playOriginalQuickTheme()) {
-      playMediaQuickTheme();
-    }
-    const startedAt = performance.now();
-    drawLogoSequence(startedAt);
-    finishTimer = window.setTimeout(finishSequence, DURATION_SECONDS * 1000 + 80);
+      active = true;
+      visitSeed = Math.floor(secureRandomUnit() * 2147483646) + 1;
+      if (link.hasAttribute("data-canonical-quicktheme")) {
+        const presetIndex = Math.floor(secureRandomUnit() * CANONICAL_QUICK_THEME_SEEDS.length);
+        quickThemeSeed = CANONICAL_QUICK_THEME_SEEDS[presetIndex];
+      } else {
+        quickThemeSeed = 0;
+      }
+      randomState = visitSeed >>> 0;
+      prepareWorldWindow();
+      overlay.hidden = false;
+      document.body.classList.add("loading-active");
+      document.querySelector("main")?.setAttribute("aria-hidden", "true");
+
+      if (link.hasAttribute("data-canonical-quicktheme")) {
+        playCanonicalQuickTheme();
+      } else if (!window.isSecureContext || !playOriginalQuickTheme()) {
+        playMediaQuickTheme();
+      }
+      const startedAt = performance.now();
+      drawLogoSequence(startedAt);
+      finishTimer = window.setTimeout(finishSequence, DURATION_SECONDS * 1000 + 80);
+    });
   });
 })();

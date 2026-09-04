@@ -52,15 +52,8 @@
       }
 
       .quickworlds-loading__inner {
-        width: min(84vw, 760px);
+        width: min(72vw, 420px);
         text-align: center;
-      }
-
-      #quickworlds-loading-logo {
-        display: block;
-        width: 100%;
-        height: auto;
-        image-rendering: pixelated;
       }
 
       #quickworlds-loading-state {
@@ -87,11 +80,6 @@
         transition: width 120ms linear;
       }
 
-      @media (prefers-reduced-motion: reduce) {
-        #quickworlds-loading {
-          transition-duration: 160ms;
-        }
-      }
     </style>
     <link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
@@ -103,8 +91,7 @@
 
     <div id="quickworlds-loading" role="status" aria-live="polite">
       <div class="quickworlds-loading__inner">
-        <canvas id="quickworlds-loading-logo" width="1874" height="839" aria-hidden="true"></canvas>
-        <p id="quickworlds-loading-state">entering Grass Field…</p>
+        <p id="quickworlds-loading-state">loading Grass Field…</p>
         <div id="quickworlds-loading-progress" aria-hidden="true"><span></span></div>
       </div>
     </div>
@@ -114,93 +101,10 @@
       (() => {
         "use strict";
 
-        const config = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":21773776,"index.wasm":39514754},"focusCanvas":false,"gdextensionLibs":[],"godotPoolSize":4};
+        const config = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":21777272,"index.wasm":39514754},"focusCanvas":false,"gdextensionLibs":[],"godotPoolSize":4};
         const overlay = document.getElementById("quickworlds-loading");
         const state = document.getElementById("quickworlds-loading-state");
         const progress = document.querySelector("#quickworlds-loading-progress span");
-        const logoCanvas = document.getElementById("quickworlds-loading-logo");
-        const logoContext = logoCanvas.getContext("2d", { alpha: true });
-        const logo = new Image();
-        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const columns = 38;
-        const rows = 17;
-        let animationFrame = 0;
-        let cycleStart = performance.now();
-        let tiles = [];
-
-        const randomizeTiles = () => {
-          tiles = [];
-          for (let row = 0; row < rows; row += 1) {
-            for (let column = 0; column < columns; column += 1) {
-              tiles.push({
-                column,
-                row,
-                order: Math.random(),
-                offsetX: (Math.random() - 0.5) * 88,
-                offsetY: (Math.random() - 0.5) * 68,
-                duration: 0.38 + Math.random() * 0.66,
-              });
-            }
-          }
-        };
-
-        const smoothstep = (value) => {
-          const bounded = Math.max(0, Math.min(1, value));
-          return bounded * bounded * (3 - 2 * bounded);
-        };
-
-        const drawLogo = (timestamp) => {
-          if (!logo.complete || !logo.naturalWidth) {
-            animationFrame = requestAnimationFrame(drawLogo);
-            return;
-          }
-          const elapsed = (timestamp - cycleStart) / 1000;
-          if (elapsed >= 6.2) {
-            cycleStart = timestamp;
-            randomizeTiles();
-          }
-          const cycleElapsed = (timestamp - cycleStart) / 1000;
-          const sourceWidth = logo.naturalWidth / columns;
-          const sourceHeight = logo.naturalHeight / rows;
-          const destinationWidth = logoCanvas.width / columns;
-          const destinationHeight = logoCanvas.height / rows;
-          logoContext.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
-          logoContext.imageSmoothingEnabled = false;
-
-          if (reducedMotion) {
-            logoContext.drawImage(logo, 0, 0, logoCanvas.width, logoCanvas.height);
-          } else {
-            tiles.forEach((tile) => {
-              const onset = 0.08 + tile.order * 4.25;
-              const amount = smoothstep((cycleElapsed - onset) / tile.duration);
-              if (amount <= 0) {
-                return;
-              }
-              const width = destinationWidth * (0.56 + amount * 0.44) + 1;
-              const height = destinationHeight * (0.56 + amount * 0.44) + 1;
-              const destinationX = tile.column * destinationWidth
-                + tile.offsetX * (1 - amount)
-                + (destinationWidth - width) / 2;
-              const destinationY = tile.row * destinationHeight
-                + tile.offsetY * (1 - amount)
-                + (destinationHeight - height) / 2;
-              logoContext.globalAlpha = Math.min(1, amount * 1.18);
-              logoContext.drawImage(
-                logo,
-                tile.column * sourceWidth,
-                tile.row * sourceHeight,
-                sourceWidth + 0.5,
-                sourceHeight + 0.5,
-                destinationX,
-                destinationY,
-                width,
-                height,
-              );
-            });
-            logoContext.globalAlpha = 1;
-          }
-          animationFrame = requestAnimationFrame(drawLogo);
-        };
 
         const fail = (error) => {
           console.error(error);
@@ -213,14 +117,9 @@
           progress.style.width = "100%";
           overlay.classList.add("ready");
           window.setTimeout(() => {
-            cancelAnimationFrame(animationFrame);
             overlay.remove();
           }, 850);
         }, { once: true });
-
-        randomizeTiles();
-        logo.src = "../../assets/quickworlds-logo-horizontal.png";
-        animationFrame = requestAnimationFrame(drawLogo);
 
         const missing = Engine.getMissingFeatures({ threads: false });
         if (missing.length) {

@@ -104,6 +104,16 @@ body {
   filter: contrast(0.92) drop-shadow(1px 1px 0 #b7b7b3);
 }
 
+.labyrinth a {
+  display: block;
+  border-radius: 2px;
+}
+
+.labyrinth a:focus-visible {
+  outline: 2px dotted #213f55;
+  outline-offset: 4px;
+}
+
 .status-box {
   display: grid;
   grid-template-columns: 27px 1fr;
