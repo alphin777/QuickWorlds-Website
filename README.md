@@ -19,7 +19,7 @@ The site deliberately preserves an early-internet / late-1990s visual language. 
 
 Serve the repository root with any basic static web server and open the printed local address. No dependencies need to be installed.
 
-The public labyrinth picture launches the desktop-only Grass Field proof. It performs the mobile/touch-class check before requesting the large world files, plays one website pixel-assembly entrance with an approved generated QuickTheme, then attempts to open Grass Field in the compact popup. Browsers that block the delayed popup continue in the current tab. The game uses a quiet text-only loader. On exit, the game window holds `QUICKWORLDS COMING SOON` before returning without replaying the animation. `[ enter later ]` remains as inert placeholder text and triggers nothing.
+The public labyrinth picture launches the desktop-only Grass Field proof. It performs the mobile/touch-class check before requesting the large world files, plays one website pixel-assembly entrance with an approved generated QuickTheme, then continues into Grass Field in the same browser tab. The game uses a quiet text-only loader. On exit, the same tab holds `QUICKWORLDS COMING SOON` before returning without replaying the animation. `[ enter later ]` remains as inert placeholder text and triggers nothing.
 
 ## Publish an update
 

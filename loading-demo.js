@@ -27,7 +27,6 @@
   let visitSeed = 0;
   let quickThemeSeed = 0;
   let randomState = 0;
-  let pendingWorldWindow = null;
   let enterLink = enterLinks[0];
   let worldUrl = "";
   let returnUrl = "";
@@ -68,15 +67,6 @@
     destination.searchParams.set("seed", String(visitSeed));
     if (returnUrl) {
       destination.searchParams.set("return", new URL(returnUrl, window.location.href).href);
-    }
-    pendingWorldWindow = window.open(
-      destination.href,
-      "quickworlds-grass-field",
-      "popup=yes,width=754,height=419,resizable=yes,scrollbars=no",
-    );
-    if (pendingWorldWindow) {
-      pendingWorldWindow.focus();
-      return;
     }
     window.location.assign(destination.href);
   };
@@ -507,15 +497,6 @@
     }
     if (event.data.type === "quickworld-exited") {
       document.body.dataset.quickworldState = "ending";
-      const exitingWorldWindow = pendingWorldWindow;
-      pendingWorldWindow = null;
-      window.setTimeout(() => {
-        if (exitingWorldWindow && !exitingWorldWindow.closed) {
-          exitingWorldWindow.close();
-        }
-        document.body.dataset.quickworldState = "returned";
-        enterLink.focus({ preventScroll: true });
-      }, 4700);
     }
   });
 
