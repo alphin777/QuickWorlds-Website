@@ -59,32 +59,6 @@
     return navigator.maxTouchPoints > 1 && coarsePointer && hoverUnavailable;
   };
 
-  const prepareWorldWindow = () => {
-    if (!worldUrl) {
-      return;
-    }
-    pendingWorldWindow = window.open(
-      "about:blank",
-      "quickworlds-grass-field",
-      "popup=yes,width=754,height=419,resizable=yes,scrollbars=no",
-    );
-    if (!pendingWorldWindow) {
-      return;
-    }
-    pendingWorldWindow.document.title = "QuickWorlds — preparing Grass Field";
-    pendingWorldWindow.document.body.style.cssText = [
-      "margin:0",
-      "min-height:100vh",
-      "display:grid",
-      "place-items:center",
-      "background:#02040b",
-      "color:#b9c3b3",
-      "font:13px 'Courier New',monospace",
-    ].join(";");
-    pendingWorldWindow.document.body.textContent = "preparing Grass Field…";
-    window.focus();
-  };
-
   const launchWorld = () => {
     if (!worldUrl) {
       return;
@@ -95,8 +69,12 @@
     if (returnUrl) {
       destination.searchParams.set("return", new URL(returnUrl, window.location.href).href);
     }
-    if (pendingWorldWindow && !pendingWorldWindow.closed) {
-      pendingWorldWindow.location.replace(destination.href);
+    pendingWorldWindow = window.open(
+      destination.href,
+      "quickworlds-grass-field",
+      "popup=yes,width=754,height=419,resizable=yes,scrollbars=no",
+    );
+    if (pendingWorldWindow) {
       pendingWorldWindow.focus();
       return;
     }
@@ -603,7 +581,6 @@
         quickThemeSeed = 0;
       }
       randomState = visitSeed >>> 0;
-      prepareWorldWindow();
       overlay.hidden = false;
       document.body.classList.add("loading-active");
       document.querySelector("main")?.setAttribute("aria-hidden", "true");
