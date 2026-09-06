@@ -47,3 +47,11 @@ DNS changes require a fresh inspection and Michael's explicit confirmation immed
 Michael completed the tuning pass and explicitly approved publication on September 4, 2026. The public labyrinth picture is the only Grass Field launch surface; `[ enter later ]` remains visible as inert placeholder text. The generated non-threaded Godot export lives at `worlds/grass-field/`, with `staging/grass-field/` retained as a diagnostic launcher.
 
 The website performs the desktop/mobile gate before the large world download, plays the pixel-assembly entrance and an approved canonical Godot QuickTheme render once, and then continues in the same tab with a text-only `loading Grass Field…` progress screen. Each launch passes an independent randomized seed to the in-world QuickFugue. On exit, the same tab holds `QUICKWORLDS COMING SOON` for four and a half seconds, then returns without another animation. Grass Field is a separate desktop-only delivery proof; it does not publish or modify the Labyrinth and does not establish gallery, multiplayer, or mobile architecture.
+
+## September 5 terrain composition publication
+
+Michael approved publishing his current authored scene after the local Terrain Composition v1 audition. Source: QuickWorlds commit `3d1de8f9e90b88c7a28ecdd2704cbd1bea471026`. Build token: `20260905-terrain-1`.
+
+This export includes three authored mounds, one ridge, terrain-conforming grass and distant coverage, and the current ten-minute cycle with 10% night duration. The placeholder page layout and same-tab launch remain unchanged. The local Web build reached its ready marker without browser errors; the authored terrain recipe replay passed. The separate Labyrinth and unrelated local project edits are excluded.
+
+Export PCK SHA-256: `6e883fb9eb7f31073130bb40ba86d9e077f699e320824b01e8bb666bd4cbf7b2`.
