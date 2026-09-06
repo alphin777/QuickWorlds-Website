@@ -59,3 +59,9 @@ Export PCK SHA-256: `6e883fb9eb7f31073130bb40ba86d9e077f699e320824b01e8bb666bd4c
 ## Cycling stars update — September 5, 2026
 
 Published with Michael's explicit approval. Source implementation `a55632c10d441330e2d1d5762b04272c1b6eb434`; shell cache token `20260905-stars-1`. Stars rotate with the authored sky clock and night duration. The existing authored scene, launcher and site layout are preserved. Native sky render, clock/recipe and editor checks passed, including `QW_STAR_CYCLE_OK`.
+
+## Moon and slower stars publication — September 5, 2026
+
+Approved publication of the moon/star updates only, retaining the original 15:00 start, ten-minute cycle and 10% night duration. Moon settings: enabled, diameter 5.11 degrees, brightness 1.23, authored near-white tint, random initial phase, advance each moonrise, five-moonrise phase cycle. Stars move at half the Moon's speed; the Moon fades later at dawn. Uses the GPU-compressed NASA texture with source credit retained in the QuickWorlds repo.
+
+All scene content outside SkyAndTime matches the existing published source, including terrain, clouds, grass and audio settings. Cache token: `20260905-moon-1`. Export and local browser startup passed without browser errors at a measured 60 FPS startup average.
