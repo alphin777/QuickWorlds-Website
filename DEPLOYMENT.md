@@ -65,3 +65,5 @@ Published with Michael's explicit approval. Source implementation `a55632c10d441
 Approved publication of the moon/star updates only, retaining the original 15:00 start, ten-minute cycle and 10% night duration. Moon settings: enabled, diameter 5.11 degrees, brightness 1.23, authored near-white tint, random initial phase, advance each moonrise, five-moonrise phase cycle. Stars move at half the Moon's speed; the Moon fades later at dawn. Uses the GPU-compressed NASA texture with source credit retained in the QuickWorlds repo.
 
 All scene content outside SkyAndTime matches the existing published source, including terrain, clouds, grass and audio settings. Cache token: `20260905-moon-1`. Export and local browser startup passed without browser errors at a measured 60 FPS startup average.
+
+Final publication uses the concurrently landed scoped export hardening, merged without history rewriting. Source commit: `62302ac`. `QW_PUBLICATION_PACKAGE_AUDIT_OK`: PCK 9,340,788 bytes, total delivery 49,189,776 bytes, 238 packed resources. The dependency list includes the compressed moon texture. The audit report stays outside the website.
