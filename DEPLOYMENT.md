@@ -55,3 +55,7 @@ Michael approved publishing his current authored scene after the local Terrain C
 This export includes three authored mounds, one ridge, terrain-conforming grass and distant coverage, and the current ten-minute cycle with 10% night duration. The placeholder page layout and same-tab launch remain unchanged. The local Web build reached its ready marker without browser errors; the authored terrain recipe replay passed. The separate Labyrinth and unrelated local project edits are excluded.
 
 Export PCK SHA-256: `6e883fb9eb7f31073130bb40ba86d9e077f699e320824b01e8bb666bd4cbf7b2`.
+
+## Cycling stars update — September 5, 2026
+
+Published with Michael's explicit approval. Source implementation `a55632c10d441330e2d1d5762b04272c1b6eb434`; shell cache token `20260905-stars-1`. Stars rotate with the authored sky clock and night duration. The existing authored scene, launcher and site layout are preserved. Native sky render, clock/recipe and editor checks passed, including `QW_STAR_CYCLE_OK`.
