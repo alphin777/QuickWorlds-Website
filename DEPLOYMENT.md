@@ -1,5 +1,9 @@
 # QuickWorlds website deployment
 
+## September 8 moon settings follow-up
+
+Michael saved and approved updated Desktop settings: moon brightness 1.42, diameter 5 degrees. The fresh audited threaded export lives at `worlds/grass-field/releases/20260908-moon/`; packed-scene inspection confirmed both values. NASA texture, threaded audio and reverb support are retained. The test channel remains independent. PCK: 32,985,708 bytes; total: 72,269,200 bytes; 284 packed resources; publication package audit passed. Source scene authorship was exported without staging unrelated Desktop edits.
+
 ## September 8, 2026 — approved threaded audio and adaptive quality
 
 Michael accepted the threaded candidate on his Chrome work laptop and explicitly authorized public promotion, deferring broader device checks. The exact accepted test package is copied to `worlds/grass-field/releases/20260908-threaded/`. The homepage's existing intro targets that versioned directory; the permanent world index redirects there while preserving visit/return parameters. This keeps engine files isolated from older caches. The existing public look and intro are retained; the new world includes adaptive quality and the saved Desktop candidate authorship.
