@@ -1,5 +1,7 @@
 # Reusable device testing
 
+Latest candidate: `builds/20260908-threaded-audio/`. Threaded Godot Stream playback retains QuickFugue and reverb; test with both enabled. Built-in Godot PWA isolation is scoped to this candidate. First visit may reload once during setup. Package audit and fresh local browser startup passed. Laptop audio continuity remains awaiting listening acceptance. The dry Sample trial below is superseded.
+
 Current audio trial: `builds/20260908-audio-sample/?offline=1&audio_samples=1`. Keep Reverb and QuickFugue off for the wind comparison. Set `audio_samples=0` on the same build for the previous streamed path. Native audio tests and local browser startup/backend-switch checks passed; laptop listening acceptance remains open. The prior candidate remains available. No production snapshot files changed.
 
 Stable entry: https://quickworlds.com/test/
