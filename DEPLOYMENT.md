@@ -1,5 +1,13 @@
 # QuickWorlds website deployment
 
+## September 8, 2026 — approved threaded audio and adaptive quality
+
+Michael accepted the threaded candidate on his Chrome work laptop and explicitly authorized public promotion, deferring broader device checks. The exact accepted test package is copied to `worlds/grass-field/releases/20260908-threaded/`. The homepage's existing intro targets that versioned directory; the permanent world index redirects there while preserving visit/return parameters. This keeps engine files isolated from older caches. The existing public look and intro are retained; the new world includes adaptive quality and the saved Desktop candidate authorship.
+
+`https://quickworlds.com/test/` remains the reusable unlinked public test entry, automatically playing the intro. Future test updates do not change the production copy. No multiplayer backend exists. Threaded Stream audio retains environmental sounds, QuickFugue and reverb via Godot PWA isolation on HTTPS. First visit can reload once. The unsuccessful dry Sample experiment is superseded. Safari and broader device/listening checks remain open.
+
+Future full-audio candidates use `QUICKWORLDS_THREADED_TEST=1` with the canonical hosted exporter. Retain package audits outside this website and obtain explicit authorization before public promotion. Canonical detailed record: QuickWorlds `docs/ADAPTIVE_QUALITY_RELEASE_20260908.md`.
+
 ## Intended live configuration
 
 - Source: `https://github.com/alphin777/QuickWorlds-Website`
