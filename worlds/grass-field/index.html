@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-    <meta name="theme-color" content="#02040b">
+    <meta name="theme-color" content="#030817">
     <title>QuickWorlds</title>
     <style>
       html, body, #canvas {
@@ -16,8 +16,8 @@
 
       body {
         overflow: hidden;
-        background: #02040b;
-        color: #c9d2c4;
+        background: #030817;
+        color: #cedbf1;
         touch-action: none;
       }
 
@@ -37,8 +37,8 @@
         place-items: center;
         overflow: hidden;
         background:
-          radial-gradient(circle at 50% 44%, rgba(26, 42, 49, 0.72), transparent 55%),
-          #02040b;
+          radial-gradient(circle at 50% 44%, rgba(23, 43, 82, 0.72), transparent 55%),
+          #030817;
         transition: opacity 800ms ease;
       }
 
@@ -48,7 +48,7 @@
       }
 
       #quickworlds-loading.notice {
-        background: #160e13;
+        background: #101b32;
       }
 
       #quickworlds-ending {
@@ -57,12 +57,14 @@
         z-index: 20;
         display: grid;
         place-items: center;
-        background: #02040b;
-        color: #c9d2c4;
+        background:
+          radial-gradient(circle at 50% 44%, rgba(23, 43, 82, 0.72), transparent 55%),
+          #030817;
+        color: #9eb2d4;
         opacity: 0;
         visibility: hidden;
         transition: opacity 650ms ease;
-        font: 700 clamp(18px, 5vw, 30px)/1.25 "Courier New", monospace;
+        font: 12px/1.4 "Courier New", monospace;
         letter-spacing: 0.08em;
         text-align: center;
       }
@@ -80,7 +82,7 @@
       #quickworlds-loading-state {
         min-height: 1.4em;
         margin: 1.1rem 0 0;
-        color: #8e9c91;
+        color: #9eb2d4;
         font: 12px/1.4 "Courier New", monospace;
         letter-spacing: 0.08em;
       }
@@ -90,14 +92,14 @@
         height: 2px;
         margin: 0.75rem auto 0;
         overflow: hidden;
-        background: #1f302d;
+        background: #1c2c4b;
       }
 
       #quickworlds-loading-progress span {
         display: block;
         width: 0;
         height: 100%;
-        background: #91b59b;
+        background: #7fa6dc;
         transition: width 120ms linear;
       }
 
@@ -126,8 +128,8 @@
       (() => {
         "use strict";
 
-        const config = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":9340788,"index.wasm":39514754},"focusCanvas":false,"gdextensionLibs":[],"godotPoolSize":4};
-        config.mainPack = "index.pck?v=20260905-moon-1";
+        const config = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":32950336,"index.wasm":39514754},"focusCanvas":false,"gdextensionLibs":[],"godotPoolSize":4};
+        config.mainPack = "index.pck?v=20260907-grass-field-v1";
         config.fileSizes[config.mainPack] = config.fileSizes["index.pck"];
         const overlay = document.getElementById("quickworlds-loading");
         const state = document.getElementById("quickworlds-loading-state");
