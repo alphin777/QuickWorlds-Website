@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta name="theme-color" content="#030817">
+    <title>QuickWorlds</title>
+    <style>
+      html, body, #canvas {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      body {
+        overflow: hidden;
+        background: #030817;
+        color: #cedbf1;
+        touch-action: none;
+      }
+
+      #canvas {
+        display: block;
+      }
+
+      #canvas:focus {
+        outline: none;
+      }
+
+      #quickworlds-loading {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 50% 44%, rgba(23, 43, 82, 0.72), transparent 55%),
+          #030817;
+        transition: opacity 800ms ease;
+      }
+
+      #quickworlds-loading.ready {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #quickworlds-loading.notice {
+        background: #101b32;
+      }
+
+      #quickworlds-ending {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 50% 44%, rgba(23, 43, 82, 0.72), transparent 55%),
+          #030817;
+        color: #9eb2d4;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 650ms ease;
+        font: 12px/1.4 "Courier New", monospace;
+        letter-spacing: 0.08em;
+        text-align: center;
+      }
+
+      #quickworlds-ending.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .quickworlds-loading__inner {
+        width: min(72vw, 420px);
+        text-align: center;
+      }
+
+      #quickworlds-loading-state {
+        min-height: 1.4em;
+        margin: 1.1rem 0 0;
+        color: #9eb2d4;
+        font: 12px/1.4 "Courier New", monospace;
+        letter-spacing: 0.08em;
+      }
+
+      #quickworlds-loading-progress {
+        width: min(46vw, 300px);
+        height: 2px;
+        margin: 0.75rem auto 0;
+        overflow: hidden;
+        background: #1c2c4b;
+      }
+
+      #quickworlds-loading-progress span {
+        display: block;
+        width: 0;
+        height: 100%;
+        background: #7fa6dc;
+        transition: width 120ms linear;
+      }
+
+    </style>
+    <link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
+<link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+
+  </head>
+  <body>
+    <canvas id="canvas">Your browser does not support the canvas tag.</canvas>
+    <noscript>Your browser does not support JavaScript.</noscript>
+
+    <div id="quickworlds-loading" role="status" aria-live="polite">
+      <div class="quickworlds-loading__inner">
+        <p id="quickworlds-loading-state">loading Grass Field…</p>
+        <div id="quickworlds-loading-progress" aria-hidden="true"><span></span></div>
+      </div>
+    </div>
+
+    <div id="quickworlds-ending" role="status" aria-live="polite">
+      QUICKWORLDS COMING SOON
+    </div>
+
+    <script src="index.js"></script>
+    <script>
+      (() => {
+        "use strict";
+
+        const config = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":32985772,"index.wasm":39514754},"focusCanvas":false,"gdextensionLibs":[],"godotPoolSize":4};
+        config.mainPack = "index.pck?v=20260908-grass-field-v1-laptop";
+        config.fileSizes[config.mainPack] = config.fileSizes["index.pck"];
+        const overlay = document.getElementById("quickworlds-loading");
+        const state = document.getElementById("quickworlds-loading-state");
+        const progress = document.querySelector("#quickworlds-loading-progress span");
+        const ending = document.getElementById("quickworlds-ending");
+
+        window.addEventListener("quickworld-exited", () => {
+          ending.classList.add("visible");
+        }, { once: true });
+
+        const fail = (error) => {
+          console.error(error);
+          overlay.classList.add("notice");
+          state.textContent = error instanceof Error ? error.message : String(error);
+        };
+
+        window.addEventListener("quickworld-ready", () => {
+          state.textContent = "Grass Field";
+          progress.style.width = "100%";
+          overlay.classList.add("ready");
+          window.setTimeout(() => {
+            overlay.remove();
+          }, 850);
+        }, { once: true });
+
+        const missing = Engine.getMissingFeatures({ threads: false });
+        if (missing.length) {
+          fail(new Error(`This browser is missing: ${missing.join(", ")}`));
+          return;
+        }
+
+        const engine = new Engine(config);
+        engine.startGame({
+          onProgress(current, total) {
+            if (current > 0 && total > 0) {
+              progress.style.width = `${Math.min(100, (current / total) * 100)}%`;
+            }
+          },
+        }).catch(fail);
+      })();
+    </script>
+  </body>
+</html>

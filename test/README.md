@@ -1,5 +1,7 @@
 # Reusable device testing
 
+Current audio trial: `builds/20260908-audio-sample/?offline=1&audio_samples=1`. Keep Reverb and QuickFugue off for the wind comparison. Set `audio_samples=0` on the same build for the previous streamed path. Native audio tests and local browser startup/backend-switch checks passed; laptop listening acceptance remains open. The prior candidate remains available. No production snapshot files changed.
+
 Stable entry: https://quickworlds.com/test/
 
 The test URL automatically plays the existing website intro and continues to the candidate loading screen, without an entry page. Browsers may suppress intro audio until the first user interaction; automatic visual launch still proceeds. No production intro code is forked or changed.
