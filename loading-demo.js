@@ -392,7 +392,6 @@
       return;
     }
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const tiles = makeTiles();
     const columns = 38;
     const rows = 17;
@@ -408,41 +407,36 @@
       const exitFade = smoothstep((elapsed - 7.15) / 0.85);
       context2d.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (reducedMotion) {
-        context2d.globalAlpha = 1 - exitFade;
-        context2d.drawImage(logo, 0, 0, canvas.width, canvas.height);
-      } else {
-        tiles.forEach((tile) => {
-          const onset = 0.12 + tile.order * 4.85;
-          const progress = smoothstep((elapsed - onset) / tile.duration);
-          if (progress <= 0) {
-            return;
-          }
+      tiles.forEach((tile) => {
+        const onset = 0.12 + tile.order * 4.85;
+        const progress = smoothstep((elapsed - onset) / tile.duration);
+        if (progress <= 0) {
+          return;
+        }
 
-          const sourceX = tile.column * sourceWidth;
-          const sourceY = tile.row * sourceHeight;
-          const destinationX = tile.column * destinationWidth + tile.offsetX * (1 - progress);
-          const destinationY = tile.row * destinationHeight + tile.offsetY * (1 - progress);
-          const scale = 0.56 + progress * 0.44;
-          const width = destinationWidth * scale + 1;
-          const height = destinationHeight * scale + 1;
-          const centeredX = destinationX + (destinationWidth - width) / 2;
-          const centeredY = destinationY + (destinationHeight - height) / 2;
+        const sourceX = tile.column * sourceWidth;
+        const sourceY = tile.row * sourceHeight;
+        const destinationX = tile.column * destinationWidth + tile.offsetX * (1 - progress);
+        const destinationY = tile.row * destinationHeight + tile.offsetY * (1 - progress);
+        const scale = 0.56 + progress * 0.44;
+        const width = destinationWidth * scale + 1;
+        const height = destinationHeight * scale + 1;
+        const centeredX = destinationX + (destinationWidth - width) / 2;
+        const centeredY = destinationY + (destinationHeight - height) / 2;
 
-          context2d.globalAlpha = Math.min(1, progress * 1.18) * (1 - exitFade);
-          context2d.drawImage(
-            logo,
-            sourceX,
-            sourceY,
-            sourceWidth + 0.5,
-            sourceHeight + 0.5,
-            centeredX,
-            centeredY,
-            width,
-            height,
-          );
-        });
-      }
+        context2d.globalAlpha = Math.min(1, progress * 1.18) * (1 - exitFade);
+        context2d.drawImage(
+          logo,
+          sourceX,
+          sourceY,
+          sourceWidth + 0.5,
+          sourceHeight + 0.5,
+          centeredX,
+          centeredY,
+          width,
+          height,
+        );
+      });
 
       context2d.globalAlpha = 1;
       if (elapsed < DURATION_SECONDS && active) {
