@@ -1,5 +1,9 @@
 # QuickWorlds website deployment
 
+## September 9 — current Desktop publication
+
+Michael explicitly authorized publishing the current saved Desktop world after the terrain-distance trial. Fresh threaded export: `worlds/grass-field/releases/20260909-desktop/`. Includes Grass Field's 500 m runtime camera reach and current saved authored settings. Package audit passed: 295 resources, PCK 33,355,344 bytes, total 72,638,836 bytes. Threaded audio and normal homepage intro retained; `[ enter later ]` remains inactive. Test space remains independent. Unrelated Desktop edits were not staged or overwritten.
+
 ## September 8 moon settings follow-up
 
 Michael saved and approved updated Desktop settings: moon brightness 1.42, diameter 5 degrees. The fresh audited threaded export lives at `worlds/grass-field/releases/20260908-moon/`; packed-scene inspection confirmed both values. NASA texture, threaded audio and reverb support are retained. The test channel remains independent. PCK: 32,985,708 bytes; total: 72,269,200 bytes; 284 packed resources; publication package audit passed. Source scene authorship was exported without staging unrelated Desktop edits.
