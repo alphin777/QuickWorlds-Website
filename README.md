@@ -14,6 +14,13 @@ The site deliberately preserves an early-internet / late-1990s visual language. 
 - `staging/grass-field/` — non-indexed Hosted Grass Field diagnostic launcher
 - `worlds/grass-field/` — generated non-threaded Godot Web export
 - `assets/audio/quicktheme/` — approved WAV renders from the canonical Godot QuickTheme generator
+- `greatcompassion/` — self-contained Great Compassion Mantra memorization practice side project
+
+## Temporary side-project hosting
+
+[Great Compassion Mantra · Memorization Practice](https://quickworlds.com/greatcompassion/) is a separate personal side project, temporarily hosted here because QuickWorlds is currently the only website we have available for hosting. The practice tool has its own purpose and maintenance scope, separate from the QuickWorlds game.
+
+Its page, chant text, timing data, and audio live together in `greatcompassion/` so the tool can move to dedicated hosting later. See [the practice tool's README](greatcompassion/README.md) for attribution, maintenance, and migration notes.
 
 ## Preview locally
 

@@ -1,5 +1,11 @@
 # QuickWorlds website deployment
 
+## September 11, 2026 — temporary Great Compassion practice tool
+
+The project owner explicitly requested public publication of the accepted Great Compassion Mantra memorization practice tool at `https://quickworlds.com/greatcompassion/`. This is a separate personal side project, temporarily placed on the existing website because it is our only current hosting site. Its self-contained files live in `greatcompassion/` and deploy through the existing Pages workflow. The QuickWorlds homepage, game exports, and domain configuration are unchanged by this addition.
+
+The tool retains the supplied chant card's 87 lines and the attributed compassheart recording, with two recitations, synchronized highlights, individual line and word playback, repeat practice, and pitch-preserving slower audio. The initial package comes from the accepted practice source at commit `e18cfb243d22d10a5eecae4129fd179afd8c2f28`. [Maintenance and future relocation](greatcompassion/README.md) are documented alongside the tool.
+
 ## September 9 — current Desktop publication
 
 Michael explicitly authorized publishing the current saved Desktop world after the terrain-distance trial. Fresh threaded export: `worlds/grass-field/releases/20260909-desktop/`. Includes Grass Field's 500 m runtime camera reach and current saved authored settings. Package audit passed: 295 resources, PCK 33,355,344 bytes, total 72,638,836 bytes. Threaded audio and normal homepage intro retained; `[ enter later ]` remains inactive. Test space remains independent. Unrelated Desktop edits were not staged or overwritten.
