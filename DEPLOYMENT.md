@@ -1,3 +1,15 @@
+## September 12, 2026 — current saved Grass Field embodiment release
+
+Michael explicitly requested publication of the current saved Desktop Grass Field. The homepage intro and permanent world entry now lead to `worlds/grass-field/releases/20260912-embodiment/`. The new threaded release retains the existing audio, intro, mobile gate, and return flow. Other pages and the independent test channel are unchanged.
+
+Built from canonical QuickWorlds systems at `c19a15730b0fc6999dfb396929b2688c81bb75ac` plus the current saved Desktop scene and project settings. This includes the authored terrain, ocean, mist, sky, reflective body, tuned Spirit Jump, movement facing and head look, Shift jog, and steeper jogging slope allowance. The proposed controls text UI remains unimplemented. Saved Desktop authorship was frozen for the export; unrelated local edits were not staged or overwritten.
+
+Saved Grass Field scene SHA-256: `cd44f20ef1db6e3f4d38817f1237106c2f6c70f9b2334b0867ecfd57da95a7d8`.
+
+The package passed `QW_PUBLICATION_PACKAGE_AUDIT_OK` with 320 packed resources, PCK 33,447,380 bytes, and total delivery 72,730,872 bytes. The actual PCK also passed saved-value, body view, Spirit launch/return, and hosted F7/F10/F8 guard checks. Browser launch and rendering were checked locally before publication. Audit reports, source snapshots, and test scripts remain outside the website.
+
+PCK SHA-256: `da9fabaf12a1c3118e49814f8ed840359187bf74affac99dff288e769d733852`.
+
 # QuickWorlds website deployment
 
 ## September 11, 2026 — temporary Great Compassion practice tool
